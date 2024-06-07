@@ -1,0 +1,31 @@
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import seaborn as sns
+import bar_chart_race as bcr
+import pandas as pd
+import warnings
+
+mpl.rcParams['axes.unicode_minus'] = False
+
+plt.rcParams['font.family'] = 'gulim'
+
+df01 = pd.read_csv('C:/Users/82109/Downloads/서울시 지하철 호선별 역별 시간대별 승하차 인원 정보.csv', encoding='cp949')
+df01.head()
+
+df = df01[['사용월', '지하철역', '06시-07시 하차인원']]
+df01.head()
+
+df = df01.pivot_table(values = '06시-07시 하차인원', index = ['사용월'], columns = '지하철역' )
+
+df.fillna(0, inplace=True)
+df.sort_values(set(df.columns), inplace=True)
+df = df.sort_index()
+
+df.iloc[:, 0:-1] = df.iloc[:, 0:-1].cumsum()
+
+subway_ps = set()
+for index, row in df.iterrows():
+    subway_ps = set(row[row > 0].sort_values(ascending = False).head(10).index)
+df = df[subway_ps]    
+
+bcr.bar_chart_race(df = df, n_bars = 10, sort='desc', title='하차 바차트레이스', filename = 'barchart2.mp4', filter_column_colors = True)

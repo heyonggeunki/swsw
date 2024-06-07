@@ -1,0 +1,134 @@
+
+import pandas as pd
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+import seaborn as sns
+
+
+
+mpl.rcParams['axes.unicode_minus'] = False
+
+plt.rcParams['font.family'] = 'gulim'
+
+df = pd.read_csv('C:/Users/82109/Downloads/서울시 지하철 호선별 역별 시간대별 승하차 인원 정보.csv', encoding='cp949')
+df.head()
+df.tail()
+
+df.isnull().sum()
+
+df["사용월"].unique()
+df["호선명"].unique()
+df.dtypes
+
+df["사용월"] = df["사용월"].astype("str")
+df.dtypes
+
+df.drop(columns=["작업일자"],inplace=True)
+df
+
+df1 = df.iloc[:, :3]
+df1
+
+df2 = df.iloc[:, 3::2]
+df2
+
+df2.columns.str.split(" ")
+df2.columns.str.split(" ").str[0]
+
+df2.columns = df2.columns.str.split(" ").str[0]
+
+df_in = pd.concat([df1,df2],axis=1)
+df_in
+
+df1
+
+df3 = df.iloc[:,4::2]
+df3.columns = df3.columns.str.split(" ").str[0]
+
+df_out = pd.concat([df1,df3],axis=1)
+df_out
+
+df_in_202403 = df_in[df_in["사용월"]=="202403"]
+df_out_202403 = df_out[df_out["사용월"]=="202403"] 
+
+df_out_202403
+
+df_in_202403.sort_values("18시-19시", ascending=False)[["지하철역", "18시-19시"]][:10]
+df10 = df_in_202403.sort_values("18시-19시", ascending=False)[["지하철역", "18시-19시"]][:10]
+df_in_202403.sort_values("07시-08시", ascending=False)[["지하철역", "07시-08시"]][:10]
+df11 = df_in_202403.sort_values("07시-08시", ascending=False)[["지하철역", "07시-08시"]][:10]
+
+df_in_202403
+df_in_202403_agg = df_in_202403.copy()
+df_in_202403_agg.index = df_in_202403_agg["지하철역"]
+df_in_202403_agg.drop(columns=['사용월' ,'호선명', '지하철역'],inplace=True)
+df_in_202403_agg.apply("sum",axis=0)
+
+df_in_202403_agg.loc["sum"] = df_in_202403_agg.apply("sum" ,axis=0)
+df_in_202403_agg["sum"] = df_in_202403_agg.apply("sum" ,axis=1)
+
+df_in_202403_agg.tail()
+df_in_202403_agg.iloc[-1][:-1].sort_values()
+
+s_in = df_in_202403_agg.iloc[-1][:-1].sort_values()
+s_in
+
+s_in = s_in.sort_index()
+s_in
+
+df.to_csv('s_in' , index=False)
+
+
+df_out_202403_agg = df_out_202403.copy()
+df_out_202403_agg.index = df_out_202403_agg["지하철역"]
+df_out_202403_agg.drop(columns=['사용월' , '호선명' , '지하철역'],inplace=True)
+df_out_202403_agg.apply("sum" ,axis=0)
+
+df_out_202403_agg.loc["sum"] = df_out_202403_agg.apply("sum" ,axis=0)
+df_out_202403_agg["sum"] = df_out_202403_agg.apply("sum", axis=1)
+df_out_202403_agg.tail()
+
+s_out = df_out_202403_agg.iloc[-1][:-1].sort_values()
+s_out
+
+s_out = s_out.sort_index()
+s_out
+
+
+
+
+    
+
+wedgeprops={'width': 2.0, 'edgecolor': 'w', 'linewidth': 5}
+plt.title('출근시간<07시-08시> 승차인원 Top10')
+x1 = df11["지하철역"]
+y1= df11["07시-08시"]
+plt.pie(y1, labels=x1, autopct='%.1f%%', startangle=90, counterclock=False,
+        colors=['silver', 'gold', 'skyblue', 'lightgray', 'whitesmoke'],wedgeprops=wedgeprops, shadow=False)
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+
+
+
+
